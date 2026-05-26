@@ -1,0 +1,113 @@
+defaults:
+  - _self_
+  - experiment: null
+  - override hydra/launcher: submitit_slurm
+  - override hydra/job_logging: colorlog
+  - override hydra/hydra_logging: colorlog
+
+data:
+  type: sphere_encodings
+  data_seed: null
+
+  sphere_model: "sphere-small-small-cifar-10-32px"
+  base_dir: "${hydra:runtime.cwd}/../sphere_encoder/workspace/experiments" #Kinda hardcoded, should be fine as long as we run from the right directory
+  
+  data_dir: "${data.base_dir}/${data.sphere_model}/encoding"
+  raw_data_path: "${data.data_dir}/encoded_dataset.npz"
+  proc_data_path: "${data.data_dir}/processed_dataset.npz"
+  
+  sphere_dims: [256, 4]
+  squeeze_data: false
+  squeeze_alpha: 0.0
+  std_devs: 2.0
+
+sampling:
+  check_uniformity: false
+  runtime_stats: false
+  n_samples: 50000
+  num_classes: 10
+  steps: 100
+  noise_std: 1.0
+  start_t: 0.0
+  guidance_scale: 1.5
+  save_output: true
+  generation: true
+  direct_sampling: false
+
+  path_control:
+    use_latest: false
+    # Only used if use_latest is false, this will also most likely break on first run since there won't be any checkpoints yet, so make sure to set this after the first run if you want to use it
+    manual_path: "2026.05.25/181330"
+    runs_root: "${hydra:runtime.cwd}/outputs/runs/${data.sphere_model}/fm"
+
+wrapped:
+  dim: 5
+  n_mixtures: 1
+  scale: 0.2
+
+mesh:
+  numeigs: 100
+  metric: biharmonic
+  temp: 0.25
+  nsteps: 200
+  time_eps: 1e-5
+  projx: true
+  method: euler
+  atol: 1e-5
+  rtol: 1e-5
+
+model:
+  d_model: 256
+  num_layers: 8
+  actfn: swish
+  fourier: null
+  atol: 1e-7
+  rtol: 1e-7
+  metric_normalize: false
+  dropout: 0.1
+  embed_dim: 128
+  num_classes: 10
+  null_chance: 0.1
+
+optim:
+  num_iterations: 10000
+  batch_size: 1024
+  val_batch_size: 128
+  scheduler: cosine
+  grad_clip: 0.0
+  lr: 1e-4
+  wd: 0.0
+  eps: 1e-8
+  ema_decay: 0.9
+
+
+precision: bf16-mixed
+div_mode: exact
+normalize_loglik: false
+early_stopping_patience: 200
+use_wandb: true
+resume: null
+seed: 0
+val_every: 1000000
+ckpt_every: null
+visualize: false
+eval_projx: true
+local_coords: false
+
+hydra:
+  job:
+    chdir: true
+  run:
+    dir: ./outputs/runs/${data.sphere_model}/fm/${now:%Y.%m.%d}/${now:%H%M%S}
+  sweep:
+    dir: ./outputs/multiruns/${data.sphere_model}/fm/${now:%Y.%m.%d}/${now:%H%M%S}
+    subdir: ${hydra.job.num}
+  launcher:
+    max_num_timeout: 100000
+    timeout_min: 4319
+    cpus_per_task: 10
+    gpus_per_node: 1
+    nodes: 1
+    partition: gpu_h100
+    gres: gpu:h100:1
+    constraint: null

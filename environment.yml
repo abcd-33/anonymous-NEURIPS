@@ -1,0 +1,56 @@
+name: sphere_hyper
+
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+
+dependencies:
+  - python=3.10
+  - pip
+  - pytorch=2.5.*
+  - torchvision=0.20.*
+  - torchaudio=2.5.*
+  - pytorch-cuda=12.1
+  - numpy<2.0
+  - scipy
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - tqdm
+  - pyyaml
+  - ipython
+  - ipykernel
+  - jupyter
+  - igl
+  - meshplot
+  - geopandas
+  - torchmetrics
+  - lightning
+  - plotly
+  - pip:
+      - einops
+      - timm
+      - wandb
+      - fvcore
+      - iopath
+      - geoopt
+      - torch-fidelity
+      - torch-optimizer
+      - pytorch-ranger
+      - umap-learn
+      - opencv-python
+      - huggingface-hub
+      - safetensors
+      - submitit
+      - pre-commit
+      - black==22.6.0
+      - hydra-core==1.2.0
+      - hydra-submitit-launcher==1.2.0
+      - hydra_colorlog==1.2.0
+      - torchdiffeq
+      - biopython
+      - pyevtk
+      - ipympl
+      - click

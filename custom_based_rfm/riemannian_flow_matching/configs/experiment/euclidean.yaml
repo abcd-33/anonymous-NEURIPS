@@ -1,0 +1,25 @@
+# @package _global_
+data: euclidean
+use_wandb: True
+
+model:
+  d_model: 512 #1024 #512
+  num_layers: 5 #10 #5
+  actfn: swish
+  fourier: null
+  atol: 1e-6 #1e-6
+  rtol: 1e-6 #1e-6
+  metric_normalize: True
+
+optim:
+  num_iterations: 100000
+  batch_size: 128
+  val_batch_size: 2000
+  lr: 1e-4 #1e-4
+
+val_every: 1000 #5000
+div_mode:  rademacher #exact
+eval_projx: False #True
+local_coords: False
+normalize_loglik: False
+visualize: True
